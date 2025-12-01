@@ -53,30 +53,33 @@ class AddIncome(BaseModel):
     created_at: datetime.datetime
 
 class ShowIncome(BaseModel):
+    income_id: str
     income_type: IncomeType
     amount: float
     description: str
     created_at: datetime.datetime
 
 class AddExpense(BaseModel):
-    income_type: ExpenseType
+    expense_type: ExpenseType
     amount: float
     description: str
     created_at: datetime.datetime
 
 class ShowExpense(BaseModel):
+    expense_id: str
     expense_type: ExpenseType
     amount: float
     description: str
     created_at: datetime.datetime
 
 class AddInvestment(BaseModel):
-    income_type: InvestmentType
+    investment_type: InvestmentType
     amount: float
     description: str
     created_at: datetime.datetime
 
 class ShowInvestment(BaseModel):
+    investment_id: str
     investment_type: InvestmentType
     amount: float
     description: str

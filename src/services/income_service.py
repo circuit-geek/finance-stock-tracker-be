@@ -24,10 +24,11 @@ async def add_new_income(income: AddIncome, user_id: str):
     }
 
 async def show_all_income(user_id: str) -> List[ShowIncome]:
-    query = Income.get_or_none(Income.user_id == user_id)
+    query = Income.select().where(Income.user_id == user_id)
     output = []
     for value in query:
         output.append(ShowIncome(
+            income_id=str(value.id),
             income_type=value.income_type,
             amount=value.amount,
             description=value.description,

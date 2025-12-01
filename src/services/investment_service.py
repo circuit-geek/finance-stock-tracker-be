@@ -24,10 +24,11 @@ async def add_new_investment(investment: AddInvestment, user_id: str):
     }
 
 async def show_all_investments(user_id: str) -> List[ShowInvestment]:
-    query = Investments.get_or_none(Investments.user_id == user_id)
+    query = Investments.select().where(Investments.user_id == user_id)
     output = []
     for value in query:
         output.append(ShowInvestment(
+            investment_id=str(value.id),
             investment_type=value.investment_type,
             amount=value.amount,
             description=value.description,

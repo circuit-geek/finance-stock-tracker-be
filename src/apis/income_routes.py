@@ -6,6 +6,7 @@ from src.services.income_service import (
     delete_income, update_income
 )
 from src.utils.auth_utils import get_current_user
+from typing import Optional
 
 income_router = APIRouter(prefix="/income", tags=["Income"])
 
@@ -20,11 +21,12 @@ async def show_income(user = Depends(get_current_user)):
     return response
 
 @income_router.delete("/delete-income/{income_id}")
-async def delete_income_by_id(income_id, user=Depends(get_current_user)):
+async def delete_income_by_id(income_id: str, user=Depends(get_current_user)):
     response = await delete_income(income_id=income_id)
     return response
 
 @income_router.patch("/update-income/{income_id}")
-async def update_income_by_id(income_id, amount, description, user=Depends(get_current_user)):
+async def update_income_by_id(income_id: str, amount: Optional[float] = None,
+                              description: Optional[str] = None, user=Depends(get_current_user)):
     response = await update_income(income_id=income_id, amount=amount, description=description)
     return response

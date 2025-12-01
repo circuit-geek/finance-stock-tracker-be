@@ -24,10 +24,11 @@ async def add_new_expense(expense: AddExpense, user_id: str):
     }
 
 async def show_all_expense(user_id: str) -> List[ShowExpense]:
-    query = Expenses.get_or_none(Expenses.user_id == user_id)
+    query = Expenses.select().where(Expenses.user_id == user_id)
     output = []
     for value in query:
         output.append(ShowExpense(
+            expense_id=str(value.id),
             expense_type=value.expense_type,
             amount=value.amount,
             description=value.description,

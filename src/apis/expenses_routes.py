@@ -6,6 +6,7 @@ from src.services.expense_service import (
     delete_expense, update_expense
 )
 from src.utils.auth_utils import get_current_user
+from typing import Optional
 
 expense_router = APIRouter(prefix="/expense", tags=["Expenses"])
 
@@ -20,11 +21,12 @@ async def show_expense(user = Depends(get_current_user)):
     return response
 
 @expense_router.delete("/delete-expense/{expense_id}")
-async def delete_expense_by_id(expense_id, user=Depends(get_current_user)):
+async def delete_expense_by_id(expense_id: str, user=Depends(get_current_user)):
     response = await delete_expense(expense_id=expense_id)
     return response
 
 @expense_router.patch("/update-expense/{expense_id}")
-async def update_expense_by_id(expense_id, amount, description, user=Depends(get_current_user)):
+async def update_expense_by_id(expense_id: str, amount: Optional[float] = None,
+                               description: Optional[str] = None, user=Depends(get_current_user)):
     response = await update_expense(expense_id=expense_id, amount=amount, description=description)
     return response
