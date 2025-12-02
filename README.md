@@ -42,3 +42,10 @@
 - Session
 - Chat
 - Insights
+
+### Chatbot Ideas:
+
+- The user can interact with the chatbot to ask question regarding his portfolio, income and expenses.
+- There will be an agent who has access to the user data of that particular user.
+- This will enable the agent to effectively answer the user queries.
+- The chatbot will have a Streaming Response.
