@@ -5,7 +5,7 @@ from src.entities.db_model import Chat
 from src.entities.schema import NewChatSession
 from src.services.chat_service import (
     create_new_session, get_session_history, validate_session,
-    get_chat_history_in_session, stream_llm
+    get_chat_history_in_session, generate_response
 )
 from src.utils.auth_utils import get_current_user
 
@@ -24,7 +24,7 @@ async def send_message_route(session_id: str, prompt: str, user=Depends(get_curr
 
     async def event_stream():
         full_response = ""
-        async for chunk in stream_llm(prompt=prompt):
+        async for chunk in generate_response(prompt=prompt):
             full_response += chunk
             yield chunk
 

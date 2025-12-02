@@ -17,7 +17,7 @@ async def validate_session(session_id: str) -> Session:
     session = Session.get_or_none(Session.id == session_id)
     return session
 
-async def stream_llm(prompt: str):
+async def generate_response(prompt: str):
     system_prompt = Path("src/prompts/chat_prompt.jinja").read_text()
     response = client.chat.completions.create(
         model=GPT_MODEL,
