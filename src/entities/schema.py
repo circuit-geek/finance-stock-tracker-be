@@ -1,8 +1,8 @@
 import datetime
+from enum import Enum
 
 from pydantic import BaseModel
-from enum import Enum
-from typing import Optional
+
 
 class IncomeType(str, Enum):
     SALARY = "salary"
@@ -26,11 +26,6 @@ class ExpenseType(str, Enum):
     SHOPPING = "shopping"
     TRANSPORTATION = "transportation"
     OTHERS = "others"
-
-class UserModel(BaseModel):
-    user_id: str
-    name: str
-    email_id: str
 
 class UserRegister(BaseModel):
     name: str
@@ -97,12 +92,15 @@ class ChatHistoryItem(BaseModel):
     id: str
     user_message: str
     assistant_message: str
-    model_used: Optional[str] = None
-    rating: Optional[int] = None
-    feedback: Optional[str] = None
 
 class SessionInfo(BaseModel):
     id: str
     user_id: str
     session_name: str
+
+class DashBoardStats(BaseModel):
+    total_income: float
+    total_expenses: float
+    net_savings: float
+    portfolio_value: float
 
