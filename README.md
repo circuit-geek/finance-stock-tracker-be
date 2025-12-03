@@ -49,3 +49,11 @@
 - There will be an agent who has access to the user data of that particular user.
 - This will enable the agent to effectively answer the user queries.
 - The chatbot will have a Streaming Response.
+
+### Chatbot Tools Ideas:
+
+    1) add_income or expenses or investment through chat
+    2) summary of expenses or investments 
+    3) get_stock_price or information about company (yfinance API) 
+    4) finance terms and details (Tavily API) 
+    5) tool to search transactions

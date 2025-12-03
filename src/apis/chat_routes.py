@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends
-from fastapi.responses import StreamingResponse
+import json
 
-from src.entities.db_model import Chat
+from fastapi import APIRouter, Depends, BackgroundTasks
+
 from src.entities.schema import NewChatSession
 from src.services.chat_service import (
     create_new_session, get_session_history, validate_session,
-    get_chat_history_in_session, generate_response
+    get_chat_history_in_session, generate_response, add_chat_to_db
 )
 from src.utils.auth_utils import get_current_user
 
@@ -18,23 +18,18 @@ async def create_session_route(new_chat: NewChatSession, user=Depends(get_curren
     return {"session_id": str(session.id), "session_name": session.session_name}
 
 @chat_router.post("/session/{session_id}/send")
-async def send_message_route(session_id: str, prompt: str, user=Depends(get_current_user)):
+async def send_message_route(session_id: str, prompt: str,
+                             background_task: BackgroundTasks , user=Depends(get_current_user)):
 
     session = await validate_session(session_id)
-
-    async def event_stream():
-        full_response = ""
-        async for chunk in generate_response(prompt=prompt):
-            full_response += chunk
-            yield chunk
-
-        Chat.create(
-            session_id=str(session.id),
-            user_message=prompt,
-            assistant_message=full_response
-        )
-
-    return StreamingResponse(event_stream(), media_type="text/event-stream")
+    response = await generate_response(prompt=prompt, user_id=user.id)
+    if isinstance(response, str):
+        try:
+            response = json.loads(response)
+        except json.JSONDecodeError:
+            response = {"message": response}
+    background_task.add_task(add_chat_to_db, str(session.id), prompt, response)
+    return response
 
 @chat_router.get("/session/history")
 async def get_history_route(user=Depends(get_current_user)):
