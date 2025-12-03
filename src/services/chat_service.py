@@ -1,10 +1,15 @@
 from pathlib import Path
 from typing import List
 from src.entities.db_model import Session, Chat
-from src.entities.schema import (NewChatSession, ChatHistoryItem, SessionInfo,
-                                 IncomeType, ExpenseType, InvestmentType)
+from src.entities.schema import (
+    NewChatSession, ChatHistoryItem, SessionInfo,
+    IncomeType, ExpenseType, InvestmentType
+)
 from src.utils.llm_utils import get_completion
-from src.llm.cb_tools import GetInfoFromOnline, AddIncome, AddExpense, AddInvestment
+from src.llm.cb_tools import (
+    GetInfoFromOnline, AddIncome,
+    AddExpense, AddInvestment, GetStockInfo
+)
 
 
 async def create_new_session(new_chat: NewChatSession) -> Session:
@@ -32,8 +37,8 @@ async def generate_response(prompt: str, user_id: str):
         {"role": "user", "content": prompt}
     ]
 
-    tool_functions = [GetInfoFromOnline, AddIncome, AddExpense, AddInvestment]
-    response = get_completion(messages=messages, tool_functions=tool_functions, user_id= user_id)
+    tool_functions = [GetInfoFromOnline, AddIncome, AddExpense, AddInvestment, GetStockInfo]
+    response = get_completion(messages=messages, tool_functions=tool_functions, user_id=user_id)
     return response
 
 async def get_session_history(user_id: str) -> List[SessionInfo]:

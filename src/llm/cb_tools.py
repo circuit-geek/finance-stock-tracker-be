@@ -2,10 +2,11 @@ import datetime
 
 from instructor import OpenAISchema
 from pydantic import Field
-
-from src.entities.db_model import Income, Expenses, Investments
 from tavily import TavilyClient
+import yfinance
+
 from src.constants.properties import TAVILY_API_KEY
+from src.entities.db_model import Income, Expenses, Investments
 
 
 class AddIncome(OpenAISchema):
@@ -80,7 +81,6 @@ class GetInfoFromOnline(OpenAISchema):
     where the user wants info about finance terms or other such stuff to give
     upto date information.
     """
-
     user_message: str = Field(..., description="user message which requests the information")
 
     def run(self):
@@ -90,4 +90,16 @@ class GetInfoFromOnline(OpenAISchema):
             "search_result": response
         }
 
+class GetStockInfo(OpenAISchema):
+    """
+    Use this tool to get complete information about stock, the user must give the ticker symbol.
+    """
+    ticker: str = Field(..., description="the ticker symbol for which the user wants info about")
 
+    def run(self):
+        ticker = yfinance.Ticker(ticker=self.ticker)
+        financials = ticker.financials
+        
+        return {
+            "financials": str(financials)
+        }
