@@ -1,5 +1,6 @@
 import datetime
 from enum import Enum
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -14,6 +15,7 @@ class InvestmentType(str, Enum):
     STOCKS = "stocks"
     MUTUAL_FUNDS = "mutual_funds"
     REAL_ESTATE = "real_estate"
+    ETF = "etf"
     BONDS = "bonds"
     CRYPTO = "crypto"
     OTHERS = "others"
@@ -71,6 +73,9 @@ class AddInvestment(BaseModel):
     investment_type: InvestmentType
     amount: float
     description: str
+    symbol: Optional[str]
+    quantity: Optional[int]
+    purchased_at: Optional[datetime.datetime]
     created_at: datetime.datetime
 
 class ShowInvestment(BaseModel):

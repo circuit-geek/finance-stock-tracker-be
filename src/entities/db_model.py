@@ -44,8 +44,11 @@ class Investments(BaseModel):
     id = UUIDField(primary_key=True, default=uuid.uuid4)
     user_id = CharField()
     investment_type = CharField()
-    amount = FloatField()
     description = CharField(null=True)
+    amount = FloatField()
+    symbol = CharField(null=True)
+    quantity = IntegerField(null=True)
+    purchased_at = DateTimeField(null=True)
     created_at = DateTimeField()
 
     def save(self, *args, **kwargs):

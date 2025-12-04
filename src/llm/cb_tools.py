@@ -1,4 +1,5 @@
 import datetime
+from typing import Optional
 
 from instructor import OpenAISchema
 from pydantic import Field
@@ -59,6 +60,8 @@ class AddInvestment(OpenAISchema):
     """
     investment_type: str = Field(..., description="Choose one from the income type enum")
     amount: float = Field(..., description="Value of the income entered by the user")
+    symbol: Optional[str] = Field(..., description="The ticker symbol of the stock")
+    quantity: Optional[int] = Field(..., description="The quantity purchased")
     description: str = Field(..., description="Generated description based on user input")
 
     def run(self, user_id: str):
@@ -67,6 +70,9 @@ class AddInvestment(OpenAISchema):
             investment_type=self.investment_type,
             amount=self.amount,
             description=self.description,
+            symbol = self.symbol,
+            quantity = self.quantity,
+            purchased_at = datetime.datetime.now(datetime.UTC),
             created_at=datetime.datetime.now(datetime.UTC)
         )
 
@@ -103,3 +109,34 @@ class GetStockInfo(OpenAISchema):
         return {
             "financials": str(financials)
         }
+
+class GetExpenseSummary(OpenAISchema):
+    """
+    Use this tool to get summary of all the expenses for that user, this tool will return
+    all the spends as dictionary.
+    """
+
+    def run(self, user_id: str):
+        expense_map = {}
+        expenses = list(Expenses.select().where(Expenses.user_id == user_id))
+        for expense in expenses:
+            expense_map[expense.expense_type] = (expense_map.get(expense.expense_type, 0) +
+                                                 expense.amount)
+
+        return expense_map
+
+
+class GetInvestmentSummary(OpenAISchema):
+    """
+    Use this tool to get summary of all the investments for that user, this tool will return
+    all the investments as dictionary.
+    """
+
+    def run(self, user_id: str):
+        investment_map = {}
+        investments = list(Investments.select().where(Investments.user_id == user_id))
+        for investment in investments:
+            investment_map[investment.investment_type] = (investment_map.get(investment.investment_type, 0)
+                                                          + investment.amount)
+
+        return investment_map

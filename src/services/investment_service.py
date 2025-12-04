@@ -8,6 +8,9 @@ async def add_new_investment(investment: AddInvestment, user_id: str):
     investment_type = investment.investment_type
     amount = investment.amount
     description = investment.description
+    symbol = investment.symbol
+    quantity = investment.quantity
+    purchased_at = investment.purchased_at
     created_at = investment.created_at
 
     new_investment = Investments.create(
@@ -15,6 +18,9 @@ async def add_new_investment(investment: AddInvestment, user_id: str):
         investment_type = investment_type,
         amount = amount,
         description = description,
+        symbol = symbol,
+        quantity = quantity,
+        purchased_at = purchased_at,
         created_at = created_at
     )
 

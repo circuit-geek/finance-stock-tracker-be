@@ -8,7 +8,8 @@ from src.entities.schema import (
 from src.utils.llm_utils import get_completion
 from src.llm.cb_tools import (
     GetInfoFromOnline, AddIncome,
-    AddExpense, AddInvestment, GetStockInfo
+    AddExpense, AddInvestment, GetStockInfo,
+    GetExpenseSummary, GetInvestmentSummary
 )
 
 
@@ -37,7 +38,8 @@ async def generate_response(prompt: str, user_id: str):
         {"role": "user", "content": prompt}
     ]
 
-    tool_functions = [GetInfoFromOnline, AddIncome, AddExpense, AddInvestment, GetStockInfo]
+    tool_functions = [GetInfoFromOnline, AddIncome, AddExpense,
+                      AddInvestment, GetStockInfo, GetExpenseSummary, GetInvestmentSummary]
     response = get_completion(messages=messages, tool_functions=tool_functions, user_id=user_id)
     return response
 
