@@ -6,7 +6,7 @@ from src.entities.schema import (
     IncomeType, ExpenseType, InvestmentType
 )
 from src.utils.llm_utils import get_completion
-from src.llm.cb_tools import (
+from src.llm.chatbot.cb_tools import (
     GetInfoFromOnline, AddIncome,
     AddExpense, AddInvestment, GetStockInfo,
     GetExpenseSummary, GetInvestmentSummary
