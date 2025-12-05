@@ -14,6 +14,8 @@ class User(BaseModel):
     name = CharField()
     email_id = CharField()
     password = CharField()
+    dob = DateTimeField()
+    investment_preferences = JSONField(null=True)
 
     def save(self, *args, **kwargs):
         return super(User, self).save(*args, **kwargs)
@@ -70,6 +72,11 @@ class Chat(BaseModel):
 
     def save(self, *args, **kwargs):
         return super(Chat, self).save(*args, **kwargs)
+
+class Insights(BaseModel):
+    id = UUIDField(primary_key=True, default=uuid.uuid4)
+    user_id = CharField()
+    insights =
 
 def db_init():
     db = SqliteDatabase('finance-stock.db')

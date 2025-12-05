@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 
 from src.entities.schema import UserRegister, UserLogin
-from src.services.users_service import user_register, user_login
+from src.services.users_service import user_register, user_login, user_profile
 from src.utils.auth_utils import get_current_user
 
 users_router = APIRouter(prefix="/users", tags=["Users"])
@@ -14,6 +14,11 @@ async def register(user_data: UserRegister):
 @users_router.post("/login")
 async def login(user_data: UserLogin):
     response = await user_login(user_data)
+    return response
+
+@users_router.get("/profile")
+async def profile(user = Depends(get_current_user)):
+    response = await user_profile(user_id=user.id)
     return response
 
 @users_router.post("/logout")

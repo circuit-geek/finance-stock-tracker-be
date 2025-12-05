@@ -1,6 +1,6 @@
 import datetime
 from enum import Enum
-from typing import Optional
+from typing import Optional, Dict
 
 from pydantic import BaseModel
 
@@ -9,7 +9,6 @@ class IncomeType(str, Enum):
     SALARY = "salary"
     FREELANCE = "freelance"
     INVESTMENT_RETURNS = "investment_returns"
-    OTHERS = "others"
 
 class InvestmentType(str, Enum):
     STOCKS = "stocks"
@@ -18,7 +17,6 @@ class InvestmentType(str, Enum):
     ETF = "etf"
     BONDS = "bonds"
     CRYPTO = "crypto"
-    OTHERS = "others"
 
 class ExpenseType(str, Enum):
     FOOD_AND_DINING = "food_and_dining"
@@ -27,17 +25,42 @@ class ExpenseType(str, Enum):
     HEALTHCARE = "healthcare"
     SHOPPING = "shopping"
     TRANSPORTATION = "transportation"
-    OTHERS = "others"
+
+class InvestmentGoals(str, Enum):
+    WEALTH_CREATION = "wealth_creation"
+    SIP_GROWTH = "sip_growth"
+    RETIREMENT_PLANNING = "retirement_planning"
+    CHILD_EDUCATION = "child_education"
+    HOME_PURCHASE = "home_purchase"
+    SHORT_TERM_GROWTH = "short_term_growth" ## default this to 1 year
+
+class RiskAppetite(str, Enum):
+    LOW_RISK = "low_risk"
+    MEDIUM_RISK = "medium_risk"
+    HIGH_RISK = "high_risk"
+
+class InvestmentHorizon(str, Enum):
+    SHORT_TIME_HORIZON = "1-2_years"
+    MEDIUM_TIME_HORIZON = "3-4_years"
+    LONG_TIME_HORIZON = "5-10_years"
+    VERY_LONG_TIME_HORIZON = "10+_years"
 
 class UserRegister(BaseModel):
     name: str
     email_id: str
     password: str
+    dob: datetime.datetime
 
 class UserRegisterSuccess(BaseModel):
     user_id: str
     name: str
     email_id: str
+
+class UserProfile(BaseModel):
+    name: str
+    email_id: str
+    dob: datetime.datetime
+    investment_preferences: Optional[Dict]
 
 class UserLogin(BaseModel):
     email_id: str
@@ -108,4 +131,3 @@ class DashBoardStats(BaseModel):
     total_expenses: float
     net_savings: float
     portfolio_value: float
-

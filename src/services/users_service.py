@@ -1,7 +1,7 @@
 from fastapi.exceptions import HTTPException
 
 from src.entities.db_model import User
-from src.entities.schema import UserRegister, UserRegisterSuccess, UserLogin
+from src.entities.schema import UserRegister, UserRegisterSuccess, UserLogin, UserProfile
 from src.utils.auth_utils import password_hash, create_access_token
 
 
@@ -29,3 +29,13 @@ async def user_login(user_data: UserLogin):
         "user_id": str(user.id),
         "token": access_token
     }
+
+async def user_profile(user_id: str) -> UserProfile | None:
+    user = User.get_or_none(User.id == user_id)
+    if user:
+        return UserProfile(
+            name=user.name,
+            email_id=user.email_id,
+            dob=user.dob,
+            investment_preferences=user.investment_preferences
+        )
