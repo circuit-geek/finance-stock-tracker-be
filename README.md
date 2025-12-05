@@ -93,16 +93,8 @@
 {
     "id": "63216892-34a2-4925-b9cb-61c97b265043",
     "user_id": "63216892-34a2-4925-ab87-61c97b265043",
-    "insights": [
-        {
-            "date": 28-11-2025,
-            "insights": ["insight-1", "insight-2", "insight-3", "insight-4", "insight-5"]
-        },
-        {
-            "date": 05-12-2025,
-            "insights": ["insight-1", "insight-2", "insight-3", "insight-4", "insight-5"]
-        }
-    ]
+    "insights": "summary-of-insights",
+    "generated_date": "datetime"
 }
 ```
 - Display the insights of most recent-date.

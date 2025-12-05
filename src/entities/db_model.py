@@ -76,11 +76,15 @@ class Chat(BaseModel):
 class Insights(BaseModel):
     id = UUIDField(primary_key=True, default=uuid.uuid4)
     user_id = CharField()
-    insights =
+    insights = CharField()
+    generated_date = DateTimeField()
+
+    def save(self, *args, **kwargs):
+        return super(Insights, self).save(*args, **kwargs)
 
 def db_init():
     db = SqliteDatabase('finance-stock.db')
     db_proxy.initialize(db)
     db.connect()
-    db.create_tables([User, Income, Expenses, Investments, Session, Chat])
+    db.create_tables([User, Income, Expenses, Investments, Session, Chat, Insights])
     return db

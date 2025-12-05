@@ -6,6 +6,7 @@ from src.apis.expenses_routes import expense_router
 from src.apis.investment_routes import investment_router
 from src.apis.dashboard_routes import dashboard_router
 from src.apis.chat_routes import chat_router
+from src.apis.investment_advisor_routes import advisor_router
 
 async def lifespan(app: FastAPI):
     db_init()
@@ -18,3 +19,4 @@ app.include_router(expense_router)
 app.include_router(investment_router)
 app.include_router(dashboard_router)
 app.include_router(chat_router)
+app.include_router(advisor_router)

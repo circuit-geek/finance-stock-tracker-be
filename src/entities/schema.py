@@ -1,6 +1,6 @@
 import datetime
 from enum import Enum
-from typing import Optional, Dict
+from typing import Optional, Dict, List
 
 from pydantic import BaseModel
 
@@ -131,3 +131,18 @@ class DashBoardStats(BaseModel):
     total_expenses: float
     net_savings: float
     portfolio_value: float
+
+class UserInvestmentPreferences(BaseModel):
+    investment_goals: List[InvestmentGoals]
+    risk_appetite: RiskAppetite
+    investment_horizon: InvestmentHorizon
+    investment_types: List[InvestmentType]
+    monthly_investment_amount: float
+
+class UserInvestmentPreferencesSaved(BaseModel):
+    message: str
+    investment_goals: List[InvestmentGoals]
+    risk_appetite: RiskAppetite
+    investment_horizon: InvestmentHorizon
+    investment_types: List[InvestmentType]
+    monthly_investment_amount: float

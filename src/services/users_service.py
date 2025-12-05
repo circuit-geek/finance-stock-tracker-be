@@ -1,3 +1,4 @@
+from fastapi import status
 from fastapi.exceptions import HTTPException
 
 from src.entities.db_model import User
@@ -30,12 +31,13 @@ async def user_login(user_data: UserLogin):
         "token": access_token
     }
 
-async def user_profile(user_id: str) -> UserProfile | None:
+async def user_profile(user_id: str) -> UserProfile:
     user = User.get_or_none(User.id == user_id)
-    if user:
-        return UserProfile(
-            name=user.name,
-            email_id=user.email_id,
-            dob=user.dob,
-            investment_preferences=user.investment_preferences
-        )
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not a valid user")
+    return UserProfile(
+        name=user.name,
+        email_id=user.email_id,
+        dob=user.dob,
+        investment_preferences=user.investment_preferences
+    )
