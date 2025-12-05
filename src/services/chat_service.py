@@ -3,7 +3,7 @@ from typing import List
 from src.entities.db_model import Session, Chat
 from src.entities.schema import (
     NewChatSession, ChatHistoryItem, SessionInfo,
-    IncomeType, ExpenseType, InvestmentType
+    IncomeType, ExpenseType, InvestmentType, UserChatInput
 )
 from src.utils.llm_utils import get_completion
 from src.llm.chatbot.cb_tools import (
@@ -22,7 +22,7 @@ async def validate_session(session_id: str) -> Session:
     session = Session.get_or_none(Session.id == session_id)
     return session
 
-async def generate_response(prompt: str, user_id: str):
+async def generate_response(request: UserChatInput, user_id: str):
     system_prompt = Path("src/prompts/chat_prompt.jinja").read_text()
     income_types = f"""
     the income type is one among {[x for x in IncomeType]}
@@ -35,7 +35,7 @@ async def generate_response(prompt: str, user_id: str):
     """
     messages = [
         {"role": "system", "content": system_prompt + income_types + expense_types + investment_types},
-        {"role": "user", "content": prompt}
+        {"role": "user", "content": request.prompt}
     ]
 
     tool_functions = [GetInfoFromOnline, AddIncome, AddExpense,

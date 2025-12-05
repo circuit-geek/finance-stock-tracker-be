@@ -2,7 +2,7 @@ import json
 
 from fastapi import APIRouter, Depends, BackgroundTasks
 
-from src.entities.schema import NewChatSession
+from src.entities.schema import NewChatSession, UserChatInput
 from src.services.chat_service import (
     create_new_session, get_session_history, validate_session,
     get_chat_history_in_session, generate_response, add_chat_to_db
@@ -18,17 +18,17 @@ async def create_session_route(new_chat: NewChatSession, user=Depends(get_curren
     return {"session_id": str(session.id), "session_name": session.session_name}
 
 @chat_router.post("/session/{session_id}/send")
-async def send_message_route(session_id: str, prompt: str,
+async def send_message_route(session_id: str, request: UserChatInput,
                              background_task: BackgroundTasks , user=Depends(get_current_user)):
 
     session = await validate_session(session_id)
-    response = await generate_response(prompt=prompt, user_id=user.id)
+    response = await generate_response(request=request, user_id=user.id)
     if isinstance(response, str):
         try:
             response = json.loads(response)
         except json.JSONDecodeError:
             response = {"message": response}
-    background_task.add_task(add_chat_to_db, str(session.id), prompt, response)
+    background_task.add_task(add_chat_to_db, str(session.id), request.prompt, response)
     return response
 
 @chat_router.get("/session/history")

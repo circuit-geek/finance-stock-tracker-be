@@ -108,6 +108,10 @@ class ShowInvestment(BaseModel):
     description: str
     created_at: datetime.datetime
 
+class UserChatInput(BaseModel):
+    prompt: str
+
+
 class ChatResponse(BaseModel):
     message: str
     chat_id: str
