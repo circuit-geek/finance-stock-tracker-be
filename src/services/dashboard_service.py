@@ -1,5 +1,6 @@
 import datetime
 import json
+from datetime import timedelta
 from pathlib import Path
 
 from src.constants.properties import GPT_MODEL
@@ -76,6 +77,18 @@ async def show_expenses_by_category(user_id: str):
     return sorted_map
 
 async def get_llm_insights(user_id: str):
+    recent_insights = Insights.get_or_none(Insights.user_id == user_id)
+    now = datetime.datetime.now(datetime.UTC)
+    if recent_insights:
+        if isinstance(recent_insights.generated_date, str):
+            generated_date = datetime.datetime.fromisoformat(recent_insights.generated_date)
+        else:
+            generated_date = recent_insights.generated_date
+        seven_days_later = generated_date + timedelta(days=7)
+        if now <= seven_days_later:
+            print("fetching from db")
+            return json.loads(recent_insights.insights)
+
     income = list(Income.select().where(Income.user_id == user_id))
     expenses = list(Expenses.select().where(Expenses.user_id == user_id))
     investments = list(Investments.select().where(Investments.user_id == user_id))
