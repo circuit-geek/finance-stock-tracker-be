@@ -1,4 +1,5 @@
 import datetime
+import json
 from pathlib import Path
 
 from src.constants.properties import GPT_MODEL
@@ -104,4 +105,4 @@ async def get_llm_insights(user_id: str):
         insight_type = LLMInsightType.DASHBOARD_INSIGHT.value,
         generated_date = datetime.datetime.now(datetime.UTC)
     )
-    return {"insights": insights}
+    return json.loads(insights)
