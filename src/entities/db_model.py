@@ -76,6 +76,7 @@ class Chat(BaseModel):
 class Insights(BaseModel):
     id = UUIDField(primary_key=True, default=uuid.uuid4)
     user_id = CharField()
+    insight_type = CharField()
     insights = CharField()
     generated_date = DateTimeField()
 

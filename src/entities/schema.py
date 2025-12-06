@@ -45,6 +45,10 @@ class InvestmentHorizon(str, Enum):
     LONG_TIME_HORIZON = "5-10_years"
     VERY_LONG_TIME_HORIZON = "10+_years"
 
+class LLMInsightType(str, Enum):
+    DASHBOARD_INSIGHT = "dashboard_insight"
+    AGENT_INVESTMENT_INSIGHT = "agent_investment_insight"
+
 class UserRegister(BaseModel):
     name: str
     email_id: str
@@ -135,6 +139,14 @@ class DashBoardStats(BaseModel):
     total_expenses: float
     net_savings: float
     portfolio_value: float
+
+class DashBoardGraphStats(BaseModel):
+    total_expenses: float
+    liquid_savings: float
+    investments: float
+    expense_percent: float
+    liquid_savings_percent: float
+    investments_percent: float
 
 class UserInvestmentPreferences(BaseModel):
     investment_goals: List[InvestmentGoals]
