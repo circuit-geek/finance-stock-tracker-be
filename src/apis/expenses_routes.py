@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 from src.entities.schema import AddExpense
 from src.services.expense_service import (
     add_new_expense, show_all_expense,
-    delete_expense, update_expense
+    delete_expense, update_expense, expense_stats
 )
 from src.utils.auth_utils import get_current_user
 from typing import Optional
@@ -29,4 +29,9 @@ async def delete_expense_by_id(expense_id: str, user=Depends(get_current_user)):
 async def update_expense_by_id(expense_id: str, amount: Optional[float] = None,
                                description: Optional[str] = None, user=Depends(get_current_user)):
     response = await update_expense(expense_id=expense_id, amount=amount, description=description)
+    return response
+
+@expense_router.get("/show-expense-stats")
+async def show_expense_stats(user=Depends(get_current_user)):
+    response = await expense_stats(user_id=user.id)
     return response

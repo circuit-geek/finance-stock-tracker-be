@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 from src.entities.schema import AddIncome
 from src.services.income_service import (
     add_new_income, show_all_income,
-    delete_income, update_income
+    delete_income, update_income, income_stats
 )
 from src.utils.auth_utils import get_current_user
 from typing import Optional
@@ -29,4 +29,9 @@ async def delete_income_by_id(income_id: str, user=Depends(get_current_user)):
 async def update_income_by_id(income_id: str, amount: Optional[float] = None,
                               description: Optional[str] = None, user=Depends(get_current_user)):
     response = await update_income(income_id=income_id, amount=amount, description=description)
+    return response
+
+@income_router.get("/show-income-stats")
+async def show_income_stats(user=Depends(get_current_user)):
+    response = await income_stats(user_id=user.id)
     return response

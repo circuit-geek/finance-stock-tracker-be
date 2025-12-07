@@ -63,3 +63,22 @@ async def update_income(income_id: str, amount: Optional[float], description: Op
         income.save()
         return {"message": "Data updated successfully!"}
 
+async def income_stats(user_id: str):
+    incomes = list(Income.select().where(Income.user_id == user_id))
+    total_entries = len(incomes)
+    unique_categories = set()
+    for income in incomes:
+        if income.income_type not in unique_categories:
+            unique_categories.add(income.income_type)
+
+    total_categories = len(unique_categories)
+    total_income = 0
+    for income in incomes:
+        total_income += income.amount
+
+    return {
+        "total_amount": total_income,
+        "total_entries": total_entries,
+        "categories": total_categories
+    }
+

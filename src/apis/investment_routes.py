@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 from src.entities.schema import AddInvestment
 from src.services.investment_service import (
     add_new_investment, show_all_investments,
-    delete_investment, update_investment
+    delete_investment, update_investment, investment_stats
 )
 from src.utils.auth_utils import get_current_user
 from typing import Optional
@@ -29,4 +29,9 @@ async def delete_investment_by_id(investment_id: str, user=Depends(get_current_u
 async def update_investment_by_id(investment_id: str, amount: Optional[float] = None,
                                   description: Optional[str] = None, user=Depends(get_current_user)):
     response = await update_investment(investment_id=investment_id, amount=amount, description=description)
+    return response
+
+@investment_router.get("/show-investment-stats")
+async def show_investment_stats(user=Depends(get_current_user)):
+    response = await investment_stats(user_id=user.id)
     return response

@@ -68,3 +68,22 @@ async def update_investment(investment_id: str, amount: Optional[float], descrip
         investment.created_at = datetime.datetime.now(datetime.UTC)
         investment.save()
         return {"message": "Data updated successfully!"}
+
+async def investment_stats(user_id: str):
+    investments = list(Investments.select().where(Investments.user_id == user_id))
+    total_entries = len(investments)
+    unique_categories = set()
+    for investment in investments:
+        if investment.investment_type not in unique_categories:
+            unique_categories.add(investment.investment_type)
+
+    total_categories = len(unique_categories)
+    total_investment = 0
+    for investment in investments:
+        total_investment += investment.amount
+
+    return {
+        "total_amount": total_investment,
+        "total_entries": total_entries,
+        "categories": total_categories
+    }

@@ -62,3 +62,22 @@ async def update_expense(expense_id: str, amount: Optional[float], description: 
         expense.created_at = datetime.datetime.now(datetime.UTC)
         expense.save()
         return {"message": "Data updated successfully!"}
+
+async def expense_stats(user_id: str):
+    expenses = list(Expenses.select().where(Expenses.user_id == user_id))
+    total_entries = len(expenses)
+    unique_categories = set()
+    for expense in expenses:
+        if expense.expense_type not in unique_categories:
+            unique_categories.add(expense.expense_type)
+
+    total_categories = len(unique_categories)
+    total_expense = 0
+    for expense in expenses:
+        total_expense += expense.amount
+
+    return {
+        "total_amount": total_expense,
+        "total_entries": total_entries,
+        "categories": total_categories
+    }
