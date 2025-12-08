@@ -1,21 +1,37 @@
+import asyncio
+import json
 from pathlib import Path
 
-from google.adk.agents import LlmAgent
-from google.adk.models.lite_llm import LiteLlm
+from pydantic_ai.agent import Agent
 
-from src.constants.properties import GPT_MODEL
-from src.llm.tools.portfolio_tools import (
-    get_current_share_price, get_share_price_on_purchase_date,
-    total_gain_loss, total_invested,
-    calculate_portfolio_value, portfolio_return_percent
-)
+from src.entities.db_model import Investments
+from src.llm.tools.portfolio_tools import portfolio_toolset
+from src.utils.agent_utils import azure_model
+from src.entities.db_model import db_init
+
+db_init()
 
 system_prompt = Path("src/llm/prompts/portfolio_agent_prompt.jinja").read_text()
 
-portfolio_agent = LlmAgent(
-    name="Portfolio Agent",
-    model=LiteLlm(model=GPT_MODEL),
-    instruction=system_prompt,
-    tools=[get_current_share_price, get_share_price_on_purchase_date,
-           total_gain_loss, total_invested, calculate_portfolio_value, portfolio_return_percent]
-)
+async def get_portfolio_agent_response(user_id: str):
+    investments = Investments.select().where(Investments.user_id == user_id)
+    portfolio_lst = []
+    for investment in investments:
+        portfolio_lst.append({
+            "ticker": investment.symbol,
+            "quantity": investment.quantity,
+            "purchase_date": investment.purchased_at,
+            "investment_type": investment.investment_type
+        })
+    print(json.dumps(portfolio_lst, indent=4))
+
+    portfolio_agent = Agent(
+        model=azure_model,
+        system_prompt=system_prompt,
+        toolsets=[portfolio_toolset]
+    )
+    response = await portfolio_agent.run(user_prompt=f"Give the analysis for this {portfolio_lst}")
+    print(response)
+
+if __name__ == "__main__":
+    asyncio.run(get_portfolio_agent_response(user_id="c1667321-24ea-447a-afeb-98bcffd3e71a"))

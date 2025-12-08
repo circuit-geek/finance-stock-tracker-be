@@ -1,6 +1,7 @@
 import datetime
 from datetime import timedelta
 from typing import List
+from pydantic_ai import FunctionToolset
 
 import yfinance
 
@@ -13,8 +14,10 @@ def get_current_share_price(ticker: str) -> float:
 
 def get_share_price_on_purchase_date(ticker: str, purchased_date: datetime.datetime) -> float:
     """Retrieves the share price of a stock on purchased date"""
+    if isinstance(purchased_date, str):
+        purchased_date = datetime.datetime.fromisoformat(purchased_date)
     start = purchased_date.date()
-    end = start + timedelta(days=1)
+    end = start + timedelta(days=7)
     stock = yfinance.Ticker(ticker)
     df = stock.history(start=start, end=end)
     return df["Close"].iloc[0]
@@ -22,12 +25,12 @@ def get_share_price_on_purchase_date(ticker: str, purchased_date: datetime.datet
 def calculate_portfolio_value(portfolio_lst: List[dict]) -> float:
     """
     Calculates the total portfolio value by extracting the ticker, quantity and purchase_date
-    example portfolio_map:
-    {
-        symbol: "MSFT",
+    example portfolio_lst:
+    [{
+        ticker: "MSFT",
         quantity: 5,
         purchase_date: datetime.datetime value
-    }
+    }]
     """
     total_value = 0.0
     for stock in portfolio_lst:
@@ -84,3 +87,28 @@ def portfolio_return_percent(portfolio_lst: List[dict]) -> float:
         return 0.0
 
     return (total_gl / total_inv) * 100
+
+
+def analyze_single_stock(ticker: str, quantity: int, purchase_date: datetime.datetime) -> dict:
+    """Analyzes a single stock investment and returns all metrics."""
+    buy_price = get_share_price_on_purchase_date(ticker, purchase_date)
+    current_price = get_current_share_price(ticker)
+    invested_amount = buy_price * quantity
+    current_value = current_price * quantity
+    gain_loss = current_value - invested_amount
+    return_percentage = (gain_loss / invested_amount) * 100
+
+    return {
+        "ticker": ticker,
+        "quantity": quantity,
+        "buy_price": buy_price,
+        "current_price": current_price,
+        "invested_amount": invested_amount,
+        "current_value": current_value,
+        "gain_loss": gain_loss,
+        "return_percentage": return_percentage
+    }
+
+portfolio_toolset = FunctionToolset(tools=[get_current_share_price, get_share_price_on_purchase_date,
+                                           calculate_portfolio_value, portfolio_return_percent,
+                                           total_invested, total_gain_loss, analyze_single_stock])
