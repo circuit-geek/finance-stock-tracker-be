@@ -93,6 +93,7 @@
 {
     "id": "63216892-34a2-4925-b9cb-61c97b265043",
     "user_id": "63216892-34a2-4925-ab87-61c97b265043",
+    "insight_type": "dashboard or agent (enum)"
     "insights": "summary-of-insights",
     "generated_date": "datetime"
 }
@@ -100,4 +101,38 @@
 - Display the insights of most recent-date.
 - Things to decide:
   1) How often to run the agents (weekly once?)
-  2) Should aggregator run everytime there is a new output from agents? 
+  2) Should aggregator run everytime there is a new output from agents?
+
+### Agent Duties and Tools Ideas
+- **Portfolio Agent**
+    1) The portfolio agent must send => portfolio_value, maximum_invested_sectors and returns per stock.
+    2) Tools => To calculate total portfolio_value we need quantity, purchased_date and ticker
+        1) Need to extract current share price (x)
+        2) Need to get share price at purchased date (y)
+        3) Quantity purchased (z)
+        4) Let n be the total stocks in the portfolio:
+
+$$
+\text{PortfolioValue} =
+\sum_{i=1}^{n} z_i \cdot x_i
+$$
+       
+$$
+\text{TotalInvested} =
+\sum_{i=1}^{n} z_i \cdot y_i
+$$
+
+$$
+\text{TotalGainLoss} =
+\sum_{i=1}^{n} z_i \cdot (x_i - y_i)
+$$
+
+$$
+\text{PortfolioReturnPercent} =
+\frac{
+\sum_{i=1}^{n} z_i (x_i - y_i)
+}{
+\sum_{i=1}^{n} z_i y_i
+} \times 100\%
+$$
+

@@ -4,7 +4,7 @@ from datetime import timedelta
 from pathlib import Path
 
 from src.constants.properties import GPT_MODEL
-from src.entities.schema import DashBoardStats, DashBoardGraphStats, LLMInsightType
+from src.entities.schema import DashBoardStats, DashBoardGraphStats, LLMInsightType, AgentName
 from src.entities.db_model import Income, Expenses, Investments, Insights
 from src.utils.llm_utils import client
 
@@ -101,7 +101,7 @@ async def get_llm_insights(user_id: str):
     user_investment = f"""
     This is the investment of the user {[x for x in investments]}
     """
-    system_prompt = Path("src/prompts/basic_insights_prompt.jinja").read_text()
+    system_prompt = Path("src/llm/prompts/basic_insights_prompt.jinja").read_text()
     response = client.chat.completions.create(
         model=GPT_MODEL,
         messages=[
@@ -116,6 +116,7 @@ async def get_llm_insights(user_id: str):
         user_id = user_id,
         insights = insights,
         insight_type = LLMInsightType.DASHBOARD_INSIGHT.value,
+        agent_name = AgentName.DASHBOARD_AGENT.value,
         generated_date = datetime.datetime.now(datetime.UTC)
     )
     return json.loads(insights)

@@ -5,7 +5,7 @@ from src.entities.schema import (
     NewChatSession, ChatHistoryItem, SessionInfo,
     IncomeType, ExpenseType, InvestmentType, UserChatInput
 )
-from src.utils.llm_utils import get_completion
+from src.llm.chatbot.cb_utils import get_completion
 from src.llm.chatbot.cb_tools import (
     GetInfoFromOnline, AddIncome,
     AddExpense, AddInvestment, GetStockInfo,
@@ -23,7 +23,7 @@ async def validate_session(session_id: str) -> Session:
     return session
 
 async def generate_response(request: UserChatInput, user_id: str):
-    system_prompt = Path("src/prompts/chat_prompt.jinja").read_text()
+    system_prompt = Path("src/llm/prompts/chat_prompt.jinja").read_text()
     income_types = f"""
     the income type is one among {[x for x in IncomeType]}
     """

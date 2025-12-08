@@ -49,6 +49,14 @@ class LLMInsightType(str, Enum):
     DASHBOARD_INSIGHT = "dashboard_insight"
     AGENT_INVESTMENT_INSIGHT = "agent_investment_insight"
 
+class AgentName(str, Enum):
+    DASHBOARD_AGENT = "dashboard_agent"
+    PORTFOLIO_AGENT = "portfolio_agent"
+    MARKET_SENTIMENT_AGENT = "market_sentiment_agent"
+    RISK_AGENT = "risk_agent"
+    ASSET_ALLOCATOR_AGENT = "asset_allocator_agent"
+    AGGREGATOR_AGENT = "aggregator_agent"
+
 class UserRegister(BaseModel):
     name: str
     email_id: str

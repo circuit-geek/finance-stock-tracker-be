@@ -77,7 +77,8 @@ class Insights(BaseModel):
     id = UUIDField(primary_key=True, default=uuid.uuid4)
     user_id = CharField()
     insight_type = CharField()
-    insights = CharField()
+    agent_name = CharField(null=True)
+    insights = JSONField()
     generated_date = DateTimeField()
 
     def save(self, *args, **kwargs):
