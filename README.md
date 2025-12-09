@@ -1,5 +1,11 @@
 ## Finance and Stock Advisor (FinSage)
 
+- **Steps to run**:
+  1) `git clone https://github.com/circuit-geek/finance-stock-tracker-be.git`
+  2) `cd finance-stock-tracker-be`
+  3) `uv sync`
+  4) `uv run uvicorn src.main:app --reload`
+
 - This application will track finances and also be a real-time investment advisor.
 - There are 3 parts to it:
     1) **Finance Tracker** - Which can take input through modal or can upload a pic or pdf, if upload option is chosen that an LLM would extract information from it.
@@ -76,18 +82,6 @@
 }
 ```
 
-### Investment Advisor Ideas
-- The first time user enter this page, there will be a modal which will take the user preferences about their investment goals and risk appetite.
-- There will be multiple agents who will be coordinating and communicating with each other.
-- **List of agents**:
-    1) Portfolio Monitor Agent => This agent will monitor the portfolio and show returns   
-    2) Risk Monitor Agent => This agent would act based on the user preference of risk and time horizon and existing portfolio and qualitatively evaluate the risk
-    3) Market Sentiment Agent => This agent would collect the news of that company to give latest insights about all the companies of the user.
-    4) Asset Allocator Agent => Based on the info collected from the Risk and Market agent and user preference goals this would suggest changes in asset allocations.
-    5) Aggregator Agent => This agent is responsible for aggregating the responses from other agents, summarize their finding in 4-5 lines which would be given as the insights and stored in db. 
-
-- Things to consider: Build agents independently and let them communicate with each other through network (A2A and MCP) or build graph based agent communication(Langgraph/Pydantic graph)?
-
 **Insights Table**
 ```{python}
 {
@@ -99,40 +93,3 @@
 }
 ```
 - Display the insights of most recent-date.
-- Things to decide:
-  1) How often to run the agents (weekly once?)
-  2) Should aggregator run everytime there is a new output from agents?
-
-### Agent Duties and Tools Ideas
-- **Portfolio Agent**
-    1) The portfolio agent must send => portfolio_value, maximum_invested_sectors and returns per stock.
-    2) Tools => To calculate total portfolio_value we need quantity, purchased_date and ticker
-        1) Need to extract current share price (x)
-        2) Need to get share price at purchased date (y)
-        3) Quantity purchased (z)
-        4) Let n be the total stocks in the portfolio:
-
-$$
-\text{PortfolioValue} =
-\sum_{i=1}^{n} z_i \cdot x_i
-$$
-       
-$$
-\text{TotalInvested} =
-\sum_{i=1}^{n} z_i \cdot y_i
-$$
-
-$$
-\text{TotalGainLoss} =
-\sum_{i=1}^{n} z_i \cdot (x_i - y_i)
-$$
-
-$$
-\text{PortfolioReturnPercent} =
-\frac{
-\sum_{i=1}^{n} z_i (x_i - y_i)
-}{
-\sum_{i=1}^{n} z_i y_i
-} \times 100\%
-$$
-
