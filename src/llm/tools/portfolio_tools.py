@@ -1,8 +1,6 @@
 import datetime
 from datetime import timedelta
 from typing import List
-from pydantic_ai import FunctionToolset
-
 import yfinance
 
 
@@ -108,7 +106,3 @@ def analyze_single_stock(ticker: str, quantity: int, purchase_date: datetime.dat
         "gain_loss": gain_loss,
         "return_percentage": return_percentage
     }
-
-portfolio_toolset = FunctionToolset(tools=[get_current_share_price, get_share_price_on_purchase_date,
-                                           calculate_portfolio_value, portfolio_return_percent,
-                                           total_invested, total_gain_loss, analyze_single_stock])

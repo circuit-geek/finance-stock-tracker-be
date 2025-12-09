@@ -110,10 +110,8 @@ async def get_llm_insights(user_id: str):
     response = client.chat.completions.create(
         model=GPT_MODEL,
         messages=[
-            {
-                "role": "system",
-                "content": system_prompt + user_income + user_expense + user_investment
-            }
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_income + user_expense + user_investment}
         ]
     )
     insights = response.choices[0].message.content
