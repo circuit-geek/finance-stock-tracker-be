@@ -53,9 +53,14 @@ async def dashboard_graph_stats(user_id: str) -> DashBoardGraphStats:
 
     liquid_savings = total_income - (total_expenses + total_investments)
 
-    expense_percent = (total_expenses/total_income)*100
-    liquid_savings_percent = (liquid_savings / total_income) * 100
-    investment_percent = (total_investments / total_income) * 100
+    if total_income == 0:
+        expense_percent = 0
+        liquid_savings_percent = 0
+        investment_percent = 0
+    else:
+        expense_percent = (total_expenses/total_income) * 100
+        liquid_savings_percent = (liquid_savings / total_income) * 100
+        investment_percent = (total_investments / total_income) * 100
 
     return DashBoardGraphStats(
         total_expenses=total_expenses,

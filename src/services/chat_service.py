@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from typing import List
 from src.entities.db_model import Session, Chat
@@ -41,7 +42,7 @@ async def generate_response(request: UserChatInput, user_id: str):
     tool_functions = [GetInfoFromOnline, AddIncome, AddExpense,
                       AddInvestment, GetStockInfo, GetExpenseSummary, GetInvestmentSummary]
     response = get_completion(messages=messages, tool_functions=tool_functions, user_id=user_id)
-    return response
+    return json.loads(response)
 
 async def get_session_history(user_id: str) -> List[SessionInfo]:
     query = Session.select().where(Session.user_id == user_id)
