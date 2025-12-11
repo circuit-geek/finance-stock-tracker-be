@@ -36,8 +36,8 @@ async def prepare_for_portfolio_insight(user_id: str):
     individual_stock_data = []
     for stock in portfolio_data:
         individual_stock_data.append(
-            analyze_single_stock(ticker=stock["ticker"], quantity=stock["quantity"],
-                                 purchase_date=stock["purchased_date"])
+            analyze_single_stock(ticker=stock.get("ticker"), quantity=stock.get("quantity"),
+                                 purchase_date=stock.get("purchased_at"))
         )
 
     return {
