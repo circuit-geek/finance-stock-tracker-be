@@ -1,13 +1,14 @@
-import json
-
-import requests
-from src.constants.properties import ALPHA_VANTAGE_KEY
 from typing import List
 
-def get_market_sentiment(tickers: List[str], api_key: str):
+import requests
+
+from src.constants.properties import ALPHA_VANTAGE_KEY
+
+
+def get_market_sentiment(tickers: List[str]):
     high_relevant_news = []
     ticker_str = ",".join(tickers)
-    url = f'https://www.alphavantage.co/query?function=NEWS_SENTIMENT&tickers={ticker_str}&apikey={api_key}'
+    url = f'https://www.alphavantage.co/query?function=NEWS_SENTIMENT&tickers={ticker_str}&apikey={ALPHA_VANTAGE_KEY}'
     r = requests.get(url)
     data = r.json()
     news_items = data.get("feed", [])

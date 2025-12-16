@@ -1,40 +1,51 @@
-from src.entities.db_model import Investments
-from src.llm.tools.portfolio_tools import total_invested
-from src.entities.db_model import db_init
+from src.entities.db_model import User
 
-db_init()
+def provide_acceptable_allocations(user_id: str) -> dict:
+    """Provide allocations based on user risk appetite and investment horizon"""
+    user = User.get_or_none(User.id == user_id)
+    if user or user.investment_preferences is None:
+        raise ValueError("User or User's investment preferences not found!")
+    risk_appetite = user.investment_preferences["risk_appetite"]
+    investment_horizon = user.investment_preferences["investment_horizon"]
 
-def get_current_allocation(user_id: str) -> dict:
-    current_investments = list(Investments.select().where(Investments.user_id == user_id))
-    print(current_investments)
-    investments_allocator = []
-    for investment in current_investments:
-        investments_allocator.append({
-            "investment_type": investment.investment_type,
-            "amount": investment.amount,
-            "quantity": investment.quantity,
-            "ticker": investment.symbol,
-            "purchased_date": investment.purchased_at
-        })
+    base_risk_rules = {
+        "low_risk": {
+            "stocks": (0, 40),
+            "mutual_funds": (30, 60),
+            "crypto": (0, 5),
+            "bonds": (20, 50)
+        },
+        "medium_risk": {
+            "stocks": (40, 70),
+            "mutual_funds": (20, 50),
+            "crypto": (0, 10),
+            "bonds": (10, 30)
+        },
+        "high_risk": {
+            "stocks": (60, 85),
+            "mutual_funds": (10, 40),
+            "crypto": (0, 20),
+            "bonds": (0, 20)
+        }
+    }
 
-    print("assets_allocation", investments_allocator)
-    total_invested_value = total_invested(portfolio_lst=investments_allocator)
-    print("total_invested", total_invested_value)
-    if total_invested_value == 0:
-        return {}
+    rules = base_risk_rules.get(risk_appetite)
+    if not rules:
+        raise ValueError(f"Invalid risk appetite: {risk_appetite}")
 
-    allocation_value = {}
-    for investment_value in investments_allocator:
-        inv_type = investment_value["investment_type"]
-        inv_value = (investment_value["amount"] * investment_value["quantity"])/total_invested_value
-        allocation_value[inv_type] = allocation_value.get(inv_type) + inv_value
+    horizon_bonus = 0
+    if investment_horizon in ["5-10_years", "10+_years"]:
+        horizon_bonus = 5
 
-    return allocation_value
+    adjusted_rules = {}
+    for asset, (min_pct, max_pct) in rules.items():
+        adjusted_rules[asset] = (
+            min_pct,
+            min(100, max_pct + horizon_bonus)
+        )
 
-
-def main():
-    result = get_current_allocation(user_id="7c3c43b47db64d37b9423c3317df85e2")
-    print(result)
-
-if __name__ == "__main__":
-    main()
+    return {
+        "risk_appetite": risk_appetite,
+        "investment_horizon": investment_horizon,
+        "acceptable_allocation_ranges": adjusted_rules
+    }
