@@ -89,6 +89,20 @@ def portfolio_return_percent(portfolio_lst: List[dict]) -> float:
 
 def analyze_single_stock(ticker: str, quantity: int, purchase_date: datetime.datetime) -> dict:
     """Analyzes a single stock investment and returns all metrics."""
+    if not purchase_date:
+        current_price = get_current_share_price(ticker)
+        current_value = current_price * quantity if current_price else 0.0
+        return {
+            "ticker": ticker,
+            "quantity": quantity,
+            "buy_price": 0.0,
+            "current_price": current_price,
+            "invested_amount": 0.0,
+            "current_value": current_value,
+            "gain_loss": 0.0,
+            "return_percentage": 0.0
+        }
+
     buy_price = get_share_price_on_purchase_date(ticker, purchase_date)
     current_price = get_current_share_price(ticker)
     invested_amount = buy_price * quantity

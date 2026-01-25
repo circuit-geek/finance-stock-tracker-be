@@ -36,16 +36,19 @@ async def get_market_agent_insights(user_id: str):
         seven_days_later = generated_date + timedelta(days=7)
         if now <= seven_days_later:
             print("fetching from db")
+            if isinstance(recent_insights.insights, dict):
+                return recent_insights.insights
             return json.loads(recent_insights.insights)
 
     system_prompt = Path("src/llm/prompts/market_sentiment_agent_prompt.jinja").read_text()
-    get_market_sentiment_data = get_market_sentiments(user_id=user_id)
+    get_market_sentiment_data = await get_market_sentiments(user_id=user_id)
     response = client.chat.completions.create(
         model=GPT_MODEL,
         messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": json.dumps(get_market_sentiment_data)}
-        ]
+        ],
+        response_format={"type": "json_object"}
     )
     final_response = json.loads(response.choices[0].message.content)
     Insights.create(

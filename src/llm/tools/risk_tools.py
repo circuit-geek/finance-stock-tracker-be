@@ -1,32 +1,50 @@
 from src.entities.db_model import Investments
-from src.llm.tools.portfolio_tools import total_invested
-
+from src.llm.tools.portfolio_tools import analyze_single_stock, calculate_portfolio_value
 
 def get_current_allocation(user_id: str) -> dict:
-    """This will get the current asset allocation across entire portfolio"""
+    """This will get the current asset allocation across entire portfolio based on Market Value"""
     current_investments = list(Investments.select().where(Investments.user_id == user_id))
-    print(current_investments)
-    investments_allocator = []
-    for investment in current_investments:
-        investments_allocator.append({
-            "investment_type": investment.investment_type,
-            "amount": investment.amount,
-            "quantity": investment.quantity,
-            "ticker": investment.symbol,
-            "purchased_date": investment.purchased_at
+    
+    investment_list = []
+    # Prepare list for calculate_portfolio_value equivalent
+    for inv in current_investments:
+        investment_list.append({
+            "ticker": inv.symbol,
+            "quantity": inv.quantity,
+            "purchase_date": inv.purchased_at,
+            "investment_type": inv.investment_type,
+            "amount": inv.amount # Fallback
         })
-
-    print("assets_allocation", investments_allocator)
-    total_invested_value = total_invested(portfolio_lst=investments_allocator)
-    print("total_invested", total_invested_value)
-    if total_invested_value == 0:
+        
+    # We need total market value to calculate percentage
+    # We can iterate and sum up
+    
+    type_value_map = {}
+    total_market_value = 0.0
+    
+    for inv in investment_list:
+        if inv["ticker"] and inv["quantity"]:
+            # Use real market data
+            # Note: analyze_single_stock fetches price. This might be slow if many stocks.
+            # But essential for correct risk profile.
+            metrics = analyze_single_stock(inv["ticker"], inv["quantity"], inv["purchase_date"])
+            market_val = metrics["current_value"]
+        else:
+            # Fallback for assets without ticker (e.g. manual real estate entry)
+            # Assuming 'amount' is total value in this case
+            market_val = inv["amount"]
+            
+        total_market_value += market_val
+        inv_type = inv["investment_type"]
+        type_value_map[inv_type] = type_value_map.get(inv_type, 0) + market_val
+        
+    if total_market_value == 0:
         return {}
 
     allocation_value = {}
-    for investment_value in investments_allocator:
-        inv_type = investment_value["investment_type"]
-        inv_value = (investment_value["amount"] * investment_value["quantity"])/total_invested_value
-        allocation_value[inv_type] = allocation_value.get(inv_type, 0) + inv_value
+    for inv_type, val in type_value_map.items():
+        allocation_value[inv_type] = val / total_market_value
+        
     return allocation_value
 
 def analyze_portfolio_composition_for_risk(user_id: str) -> dict:

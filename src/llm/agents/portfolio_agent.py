@@ -37,7 +37,7 @@ async def prepare_for_portfolio_insight(user_id: str):
     for stock in portfolio_data:
         individual_stock_data.append(
             analyze_single_stock(ticker=stock.get("ticker"), quantity=stock.get("quantity"),
-                                 purchase_date=stock.get("purchased_at"))
+                                 purchase_date=stock.get("purchase_date"))
         )
 
     return {
@@ -62,16 +62,19 @@ async def get_portfolio_agent_insights(user_id: str):
         seven_days_later = generated_date + timedelta(days=7)
         if now <= seven_days_later:
             print("fetching from db")
+            if isinstance(recent_insights.insights, dict):
+                return recent_insights.insights
             return json.loads(recent_insights.insights)
 
     system_prompt = Path("src/llm/prompts/portfolio_agent_prompt.jinja").read_text()
-    portfolio_data = prepare_for_portfolio_insight(user_id=user_id)
+    portfolio_data = await prepare_for_portfolio_insight(user_id=user_id)
     response = client.chat.completions.create(
         model=GPT_MODEL,
         messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": json.dumps(portfolio_data)}
-        ]
+        ],
+        response_format={"type": "json_object"}
     )
     final_response = json.loads(response.choices[0].message.content)
     Insights.create(

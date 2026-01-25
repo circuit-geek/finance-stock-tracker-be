@@ -3,7 +3,7 @@ from src.entities.db_model import User
 def provide_acceptable_allocations(user_id: str) -> dict:
     """Provide allocations based on user risk appetite and investment horizon"""
     user = User.get_or_none(User.id == user_id)
-    if user or user.investment_preferences is None:
+    if not user or user.investment_preferences is None:
         raise ValueError("User or User's investment preferences not found!")
     risk_appetite = user.investment_preferences["risk_appetite"]
     investment_horizon = user.investment_preferences["investment_horizon"]
