@@ -3,7 +3,7 @@ import json
 from datetime import timedelta
 from pathlib import Path
 
-from src.constants.properties import GPT_MODEL, ALPHA_VANTAGE_KEY
+from src.constants.properties import GPT_MODEL
 from src.entities.db_model import Investments, Insights
 from src.entities.schema import LLMInsightType, AgentName
 from src.llm.tools.market_sentiment_tool import get_market_sentiment
@@ -19,7 +19,7 @@ async def get_tickers_to_extract(user_id: str):
 
 async def get_market_sentiments(user_id: str):
     get_user_tickers = await get_tickers_to_extract(user_id=user_id)
-    market_sentiments = get_market_sentiment(tickers=get_user_tickers, api_key=ALPHA_VANTAGE_KEY)
+    market_sentiments = get_market_sentiment(tickers=get_user_tickers)
     return market_sentiments
 
 async def get_market_agent_insights(user_id: str):
